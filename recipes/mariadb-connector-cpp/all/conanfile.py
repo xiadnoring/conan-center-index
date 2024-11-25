@@ -1,6 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
-from conan.tools.files import get, copy, apply_conandata_patches, export_conandata_patches
+from conan.tools.files import get, copy, apply_conandata_patches, export_conandata_patches, rename
 from conan.errors import ConanInvalidConfiguration
 from conan.tools.apple import fix_apple_shared_install_name
 from conan.tools.build import check_min_cppstd
@@ -106,6 +106,9 @@ class MariadbConnectorCppRecipe (ConanFile):
         else:
             cmake.install(component="Development")
 
+        if os.path.exists(os.path.join(self.package_folder, "lib", "mariadbcpp-static.lib")) and not os.path.exists(os.path.join(self.package_folder, "lib", "mariadbcpp.lib")):
+            rename(self, os.path.join(self.package_folder, "lib", "mariadbcpp-static.lib"), os.path.join(self.package_folder, "lib", "mariadbcpp.lib"))
+
         copy(self, "COPYING", src=os.path.join(self.source_folder), dst=os.path.join(self.package_folder, "licenses"))
 
         fix_apple_shared_install_name(self)
@@ -124,12 +127,10 @@ class MariadbConnectorCppRecipe (ConanFile):
                 self.cpp_info.system_libs.append("secur32")
 
         if self.options.shared:
-            self.cpp_info.libs = ["mariadbcpp"]
             if self.settings.os == "Windows":
                 self.cpp_info.defines.append("MARIADB_EXPORTED=__declspec(dllimport)")
         else:
             if self.settings.os == "Windows":
                 self.cpp_info.defines.append("MARIADB_STATIC_LINK")
-                self.cpp_info.libs = ["mariadbcpp-static"]
-            else:
-                self.cpp_info.libs = ["mariadbcpp"]
+
+        self.cpp_info.libs = ["mariadbcpp"]
