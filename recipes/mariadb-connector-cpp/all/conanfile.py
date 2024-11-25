@@ -1,6 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
-from conan.tools.files import get, copy, collect_libs, rmdir, rm, apply_conandata_patches, export_conandata_patches, replace_in_file
+from conan.tools.files import get, copy, apply_conandata_patches, export_conandata_patches
 from conan.errors import ConanInvalidConfiguration
 from conan.tools.apple import fix_apple_shared_install_name
 from conan.tools.build import check_min_cppstd
@@ -128,6 +128,6 @@ class MariadbConnectorCppRecipe (ConanFile):
             if self.settings.os == "Windows":
                 self.cpp_info.defines.append("MARIADB_EXPORTED=__declspec(dllimport)")
         else:
-            self.cpp_info.libs = ["mariadbcpp-static"]
+            self.cpp_info.libs = ["mariadbcpp"]
             if self.settings.os == "Windows":
                 self.cpp_info.defines.append("MARIADB_STATIC_LINK")
