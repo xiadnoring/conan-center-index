@@ -125,12 +125,7 @@ class MariadbConnectorCppRecipe (ConanFile):
             self.cpp_info.system_libs = ["ws2_32", "shlwapi"]
             if self.options.with_ssl == "schannel":
                 self.cpp_info.system_libs.append("secur32")
-
-        if self.options.shared:
-            if self.settings.os == "Windows":
-                self.cpp_info.defines.append("MARIADB_EXPORTED=__declspec(dllimport)")
-        else:
-            if self.settings.os == "Windows":
+            if not self.options.shared:
                 self.cpp_info.defines.append("MARIADB_STATIC_LINK")
 
         self.cpp_info.libs = ["mariadbcpp"]
